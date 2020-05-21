@@ -226,6 +226,32 @@ public:
   {
   }
 
+  auto begin()
+  {
+    return std::begin( *data );
+  }
+
+  auto begin() const
+  {
+    return std::begin( *data );
+  }
+
+  auto end()
+  {
+    return std::end( *data );
+  }
+
+  auto end() const
+  {
+    return std::end( *data );
+  }
+
+  /*! \brief Returns an iterator to data */
+  auto find( node const& n ) const
+  {
+    return data->find( ntk.node_to_index( n ) );
+  }
+
   /*! \brief Check if a key is already defined. */
   bool has( node const& n ) const
   {
