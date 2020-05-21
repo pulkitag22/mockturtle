@@ -58,14 +58,15 @@ public:
     , ps( ps )
   {
     static_assert( is_network_type_v<Ntk>, "Ntk is not a network type" );
+    assert( ps.fanout_limit > 0u );
   }
 
   signal create_maj( signal const& a, signal const& b, signal const& c )
   {
     std::array<signal,3u> fanins;
-    fanins[0u] = ( Ntk::is_maj( Ntk::get_node( a ) ) && Ntk::fanout_size( Ntk::get_node( a ) ) >= ps.fanout_limit ) ? replicate_node( a ) : a;
-    fanins[1u] = ( Ntk::is_maj( Ntk::get_node( b ) ) && Ntk::fanout_size( Ntk::get_node( b ) ) >= ps.fanout_limit ) ? replicate_node( b ) : b;
-    fanins[2u] = ( Ntk::is_maj( Ntk::get_node( c ) ) && Ntk::fanout_size( Ntk::get_node( c ) ) >= ps.fanout_limit ) ? replicate_node( c ) : c;
+    fanins[0u] = ( Ntk::is_maj( Ntk::get_node( a ) ) && Ntk::fanout_size( Ntk::get_node( a ) ) >= ps.fanout_limit - 1 ) ? replicate_node( a ) : a;
+    fanins[1u] = ( Ntk::is_maj( Ntk::get_node( b ) ) && Ntk::fanout_size( Ntk::get_node( b ) ) >= ps.fanout_limit - 1 ) ? replicate_node( b ) : b;
+    fanins[2u] = ( Ntk::is_maj( Ntk::get_node( c ) ) && Ntk::fanout_size( Ntk::get_node( c ) ) >= ps.fanout_limit - 1 ) ? replicate_node( c ) : c;
     return Ntk::create_maj( fanins[0u], fanins[1u], fanins[2u] );
   }
 
@@ -175,7 +176,7 @@ public:
 
     std::array<signal,3u> fanins;
     Ntk::foreach_fanin( n, [&]( signal const& f, auto index ){
-        fanins[index] = ( Ntk::is_maj( Ntk::get_node( f ) ) && Ntk::fanout_size( Ntk::get_node( f ) ) >= ps.fanout_limit ) ? replicate_node( f ) : f;
+        fanins[index] = ( Ntk::is_maj( Ntk::get_node( f ) ) && Ntk::fanout_size( Ntk::get_node( f ) ) >= ps.fanout_limit - 1u ) ? replicate_node( f ) : f;
       });
 
     auto const new_signal = create_maj_overwrite_strash( fanins[0u], fanins[1u], fanins[2u] );
