@@ -61,6 +61,18 @@ public:
     assert( ps.fanout_limit > 0u );
   }
 
+  uint32_t create_po( signal const& f, std::string const& name = std::string() )
+  {
+    if ( Ntk::fanout_size( Ntk::get_node( f ) ) + 1 > ps.fanout_limit )
+    {
+      return Ntk::create_po( replicate_node( f ), name );
+    }
+    else
+    {
+      return Ntk::create_po( f, name );
+    }
+  }
+
   signal create_maj( signal const& a, signal const& b, signal const& c )
   {
     std::array<signal,3u> fanins;

@@ -84,3 +84,40 @@ TEST_CASE( "test rippled replication", "[fanout_limit_view]" )
   CHECK( lim_mig.fanout_size( lim_mig.get_node( f1 ) ) == 4u );
   CHECK( lim_mig.fanout_size( lim_mig.get_node( f2 ) ) == 4u );
 }
+
+TEST_CASE( "test duplicate fanout node", "[fanout_limit_view]" )
+{
+  using node = mig_network::node;
+  using signal = mig_network::signal;
+
+  fanout_limit_view_params ps{4u};
+  mig_network mig;
+  fanout_limit_view lim_mig{mig,ps};
+
+  signal const a = lim_mig.create_pi();
+  signal const b = lim_mig.create_pi();
+  signal const c = lim_mig.create_pi();
+
+  signal const f = lim_mig.create_maj( a, b, c );
+
+  /* only one node is needed for fanout up to 4 */
+  lim_mig.create_po( f );
+  lim_mig.create_po( f );
+  lim_mig.create_po( f );
+  lim_mig.create_po( f );
+
+  CHECK( lim_mig.num_gates() == 1u );
+  CHECK( lim_mig.fanout_size( lim_mig.get_node( f ) ) == 4u );
+
+  /* afterward the node need to be replicated */
+  lim_mig.create_po( f );
+  lim_mig.create_po( f );
+  lim_mig.create_po( f );
+  lim_mig.create_po( f );
+
+  CHECK( lim_mig.num_gates() == 2u );
+
+  lim_mig.foreach_gate( [&]( node const& n ){
+      CHECK( lim_mig.fanout_size( n ) <= 4u );
+    });
+}
