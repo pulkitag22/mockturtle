@@ -52,7 +52,7 @@ public:
   using signal  = typename Ntk::signal;
 
 public:
-  fanout_limit_view( Ntk& ntk, fanout_limit_view_params const& ps = {} )
+  fanout_limit_view( Ntk& ntk, fanout_limit_view_params const ps = {} )
     : Ntk( ntk )
     , replicas( ntk )
     , ps( ps )
@@ -76,9 +76,9 @@ public:
   signal create_maj( signal const& a, signal const& b, signal const& c )
   {
     std::array<signal,3u> fanins;
-    fanins[0u] = ( Ntk::is_maj( Ntk::get_node( a ) ) && Ntk::fanout_size( Ntk::get_node( a ) ) >= ps.fanout_limit - 1 ) ? replicate_node( a ) : a;
-    fanins[1u] = ( Ntk::is_maj( Ntk::get_node( b ) ) && Ntk::fanout_size( Ntk::get_node( b ) ) >= ps.fanout_limit - 1 ) ? replicate_node( b ) : b;
-    fanins[2u] = ( Ntk::is_maj( Ntk::get_node( c ) ) && Ntk::fanout_size( Ntk::get_node( c ) ) >= ps.fanout_limit - 1 ) ? replicate_node( c ) : c;
+    fanins[0u] = ( Ntk::is_maj( Ntk::get_node( a ) ) && Ntk::fanout_size( Ntk::get_node( a ) ) > ps.fanout_limit - 1 ) ? replicate_node( a ) : a;
+    fanins[1u] = ( Ntk::is_maj( Ntk::get_node( b ) ) && Ntk::fanout_size( Ntk::get_node( b ) ) > ps.fanout_limit - 1 ) ? replicate_node( b ) : b;
+    fanins[2u] = ( Ntk::is_maj( Ntk::get_node( c ) ) && Ntk::fanout_size( Ntk::get_node( c ) ) > ps.fanout_limit - 1 ) ? replicate_node( c ) : c;
     return Ntk::create_maj( fanins[0u], fanins[1u], fanins[2u] );
   }
 
@@ -188,7 +188,7 @@ public:
 
     std::array<signal,3u> fanins;
     Ntk::foreach_fanin( n, [&]( signal const& f, auto index ){
-        fanins[index] = ( Ntk::is_maj( Ntk::get_node( f ) ) && Ntk::fanout_size( Ntk::get_node( f ) ) >= ps.fanout_limit - 1u ) ? replicate_node( f ) : f;
+        fanins[index] = ( Ntk::is_maj( Ntk::get_node( f ) ) && Ntk::fanout_size( Ntk::get_node( f ) ) > ps.fanout_limit - 1u ) ? replicate_node( f ) : f;
       });
 
     auto const new_signal = create_maj_overwrite_strash( fanins[0u], fanins[1u], fanins[2u] );
@@ -285,7 +285,7 @@ protected:
 protected:
   uint32_t count_hash_overwrites{0};
   unordered_node_map<node,Ntk> replicas;
-  fanout_limit_view_params const& ps;
+  fanout_limit_view_params const ps;
 };
 
 } /* namespace mockturtle */
