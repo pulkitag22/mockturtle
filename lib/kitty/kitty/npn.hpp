@@ -97,27 +97,37 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_p_canonization( const TT& t
 
   auto t1 = tt;
   auto tmin = t1;
-
+  std::cout << "Initial TT: " << "\t";
+  print_binary(t1);
+  std::cout << "\n";
+  //print_binary(tmin);
+	
   fn( t1 );
 
   const auto& swaps = detail::swaps[num_vars - 2u];
-
+  //std::cout << typeid(swaps).name();
   int best_swap = -1;
 
   for ( std::size_t i = 0; i < swaps.size(); ++i )
   {
     const auto pos = swaps[i];
     swap_adjacent_inplace( t1, pos );
-
+    std::cout << "Updated TT: " << "\t";
+    //std::cout << "Swap Position: " << static_cast<int>(pos);
+    print_binary(t1);
+    std::cout << "\n";
     fn( t1 );
 
     if ( t1 < tmin )
     {
       best_swap = static_cast<int>( i );
+      std::cout << "best_swap: " << best_swap << "\n";
       tmin = t1;
     }
   }
-
+  std::cout << "New Best Min: " << "\t";
+  print_binary (tmin);
+  std::cout << "\n";
   std::vector<uint8_t> perm( num_vars );
   std::iota( perm.begin(), perm.end(), 0u );
 
@@ -126,7 +136,9 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_p_canonization( const TT& t
     const auto pos = swaps[i];
     std::swap( perm[pos], perm[pos + 1] );
   }
-
+  std::cout << "Final T_min: " << "\t";
+  print_binary(tmin) ;
+  std::cout<< "\n";
   return std::make_tuple( tmin, 0u, perm );
 }
 

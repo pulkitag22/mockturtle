@@ -548,5 +548,30 @@
       }
     ],
     "version": "17e4d78"
+  },
+  {
+    "entries": [
+      {
+        "benchmark": "add12se_54K",
+        "equivalent": false,
+        "equivalent 2": false,
+        "runtime": 0.03439779952168465,
+        "runtime 2": 0.01962300017476082,
+        "size after 2": 128,
+        "size_after": 124,
+        "size_before": 132
+      },
+      {
+        "benchmark": "add12se_4ZY",
+        "equivalent": false,
+        "equivalent 2": false,
+        "runtime": 0.03356489911675453,
+        "runtime 2": 0.018790800124406815,
+        "size after 2": 93,
+        "size_after": 91,
+        "size_before": 98
+      }
+    ],
+    "version": "93d3d2f"
   }
 ]
