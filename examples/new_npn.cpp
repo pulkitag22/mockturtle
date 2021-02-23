@@ -29,8 +29,6 @@
 
 #include <kitty/kitty.hpp>
 
-/* compile time constant for the number of variables */
-
 int main()
 {
 	kitty::dynamic_truth_table a( 3 ), b( 3 ), c( 3 );
@@ -41,7 +39,7 @@ int main()
 
 	const auto summ = kitty::binary_and(a ^ b, c) ;
 	const auto sum = a ^ b ^ c ;
-	const auto carry = kitty::ternary_majority( a, b, c );
+	const auto carry = kitty::ternary_majority( c^b , b, c );
 	auto output_t = kitty::exact_p_canonization(summ);
 	std::cout<<"\n";
 	auto output_tt = kitty::exact_p_canonization(sum);
